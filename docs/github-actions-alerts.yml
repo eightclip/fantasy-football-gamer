@@ -1,0 +1,30 @@
+# Free alternative to Vercel Pro cron jobs: GitHub runs this every 15 minutes and calls your
+# site's alert check. Copy this file to .github/workflows/alerts.yml in YOUR repository, then add:
+#   Settings → Secrets and variables → Actions → Variables:  SITE_URL   (e.g. https://my-team.vercel.app)
+#   Settings → Secrets and variables → Actions → Secrets:    CRON_SECRET (same value as in Vercel)
+# GitHub may run scheduled workflows a few minutes late, and pauses them after 60 days without
+# repository activity; re-enable from the Actions tab if that happens.
+
+name: Alert check
+on:
+  schedule:
+    - cron: '*/15 * * * *'
+  workflow_dispatch: {}
+
+permissions: {}
+
+jobs:
+  watch:
+    if: ${{ vars.SITE_URL != '' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Call /api/cron/watch
+        env:
+          SITE_URL: ${{ vars.SITE_URL }}
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 90 \
+            -H "Authorization: Bearer ${CRON_SECRET}" "${SITE_URL%/}/api/cron/watch")
+          echo "status ${code}"
+          test "${code}" = "200"

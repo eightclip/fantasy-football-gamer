@@ -1,0 +1,543 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fantasy Football Gamer</title>
+<meta name="theme-color" content="#0F1412">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Fantasy Football">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<style>
+  :root {
+   
+    --ink:    #0F1412;
+   
+    --slate:  #18201C;
+   
+    --edge:   #26312B;
+   
+    --accent:   #8FD14F;
+   
+    --pale:   #EEF2EC;
+   
+    --muted:  #95A39A;
+   
+    --warn:   #FF7A59;
+    --on-accent: #0F1412;
+    --accent-dim: rgba(143, 209, 79,.14);
+  }
+
+  * { box-sizing: border-box; }
+
+  html { -webkit-text-size-adjust: 100%; }
+  /* the header glow is wider than a phone; never let it scroll the page sideways */
+  html, body { overflow-x: clip; }
+
+  body {
+    margin: 0;
+    background: var(--ink);
+    color: var(--pale);
+    font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    line-height: 1.5;
+    font-size: 16px;
+  }
+
+  a { color: var(--pale); }
+  a:focus-visible, button:focus-visible, summary:focus-visible {
+    outline: 3px solid var(--accent);
+    outline-offset: 3px;
+  }
+
+  .wrap { max-width: 640px; margin: 0 auto; padding: 0 20px 110px; }
+
+  /* ---- top line ---- */
+  .top {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+    padding: 18px 0 0;
+    font-size: 13.5px;
+    color: var(--muted);
+  }
+  .top .league { margin: 0; color: var(--pale); font-weight: 600; }
+  .top .when { margin: 0; white-space: nowrap; }
+
+  /* ---- the lead block ---- */
+  .hero {
+    position: relative;
+    padding: 46px 0 26px;
+    isolation: isolate;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -260px; left: 50%;
+    width: 760px; height: 620px;
+    transform: translateX(-50%);
+    background: radial-gradient(ellipse at center,
+      rgba(143, 209, 79,.22) 0%,
+      rgba(143, 209, 79,.08) 40%,
+      rgba(143, 209, 79,0) 68%);
+    z-index: -1;
+    pointer-events: none;
+  }
+
+  h1 {
+    font-weight: 700;
+    font-size: clamp(36px, 9.2vw, 58px);
+    line-height: 1.0;
+    letter-spacing: -.024em;
+    margin: 0 0 14px;
+    max-width: 14ch;
+    text-wrap: balance;
+  }
+  h1.calm { color: var(--pale); }
+
+  .lead-line {
+    font-size: 18px;
+    line-height: 1.4;
+    margin: 0;
+    max-width: 44ch;
+    color: var(--pale);
+  }
+  .lead-line .by { color: var(--accent); font-weight: 700; }
+  .lead-line .why { color: var(--warn); font-weight: 600; }
+  .lead-line.quiet { color: var(--muted); font-size: 17px; }
+  .lead-line + .lead-line { margin-top: 8px; }
+
+  /* the steps: what to do in the fantasy app, in order */
+  .steps {
+    list-style: none;
+    margin: 26px 0 0;
+    padding: 0;
+    counter-reset: step;
+  }
+  .step {
+    display: grid;
+    grid-template-columns: 40px 1fr;
+    gap: 14px;
+    padding: 16px 0;
+    border-top: 1px solid var(--edge);
+    min-height: 44px;
+  }
+  .step:last-child { border-bottom: 1px solid var(--edge); }
+  .step .num {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: var(--on-accent);
+    font-weight: 800;
+    font-size: 17px;
+    display: grid; place-items: center;
+    margin-top: 3px;
+  }
+  .step .num.check { background: transparent; border: 2px solid var(--accent); color: var(--accent); }
+  .step .act {
+    font-size: 24px;
+    line-height: 1.15;
+    font-weight: 700;
+    letter-spacing: -.012em;
+    overflow-wrap: anywhere;
+  }
+  .step .act .v { font-weight: 600; }
+  .step .act .v.in  { color: var(--accent); }
+  .step .act .v.out { color: var(--warn); }
+  .step .act + .act { font-size: 19px; margin-top: 3px; }
+  .step .spot {
+    display: inline-block;
+    margin: 6px 8px 0 0;
+    padding: 3px 9px;
+    border: 1.5px solid var(--accent);
+    border-radius: 4px;
+    color: var(--accent);
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.35;
+    vertical-align: middle;
+  }
+  .step .meta { margin-top: 5px; }
+  .step .lock { color: var(--pale); font-weight: 600; }
+
+  .howto {
+    margin: 12px 0 0;
+    font-size: 14px;
+    color: var(--muted);
+  }
+
+  /* things to keep an eye on: no change today, but it could turn into one */
+  .watch {
+    border-left: 3px solid var(--warn);
+    padding: 4px 0 4px 14px;
+    margin: 22px 0 0;
+    font-size: 16px;
+  }
+  .watch b { font-weight: 700; }
+  .watch .meta { margin-top: 3px; }
+  .watch + .watch { margin-top: 14px; }
+
+  .lead-actions { margin: 22px 0 0; display: flex; gap: 10px; flex-wrap: wrap; }
+
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    min-height: 48px;
+    padding: 10px 20px;
+    border: 0; border-radius: 6px;
+    background: var(--accent); color: var(--on-accent);
+    font: inherit; font-weight: 700; font-size: 16px;
+    text-decoration: none; cursor: pointer;
+  }
+  .btn.big { width: 100%; min-height: 56px; font-size: 18px; }
+  .btn.quiet { background: transparent; color: var(--pale); border: 1.5px solid var(--edge); font-weight: 600; }
+  .btn.quiet.big { border-color: var(--muted); }
+  .btn[disabled] { opacity: .6; cursor: default; }
+
+  /* ---- league sections ---- */
+  .scroll { overflow-x: auto; }
+  table.standings td, table.standings th { padding-right: 10px; text-align: right; vertical-align: top; }
+  table.standings td:first-child, table.standings th:first-child { text-align: left; }
+  table.standings tr.mine td { color: var(--pale); }
+  table.standings tr.mine td:first-child { box-shadow: inset 3px 0 0 var(--accent); padding-left: 10px; }
+  .rank { color: var(--muted); display: inline-block; min-width: 1.2em; }
+  .you { color: var(--accent); font-size: 12px; font-weight: 700; }
+  .meta-inline { color: var(--muted); font-size: 12.5px; font-weight: 500; }
+  .move.trade .who > div { margin: 2px 0; }
+  .move.trade .v { font-weight: 700; margin-right: 4px; }
+  .move.trade .v.in { color: var(--accent); }
+  .move.trade .v.out { color: var(--warn); }
+  .news { padding: 12px 0; border-top: 1px solid var(--edge); font-size: 14.5px; }
+  .news a.meta { display: inline-block; margin-top: 4px; min-height: 32px; line-height: 32px; }
+
+  /* ---- ask Claude or ChatGPT ---- */
+  .askh { font-size: 15px; font-weight: 700; margin: 22px 0 8px; }
+  .copyrow { display: flex; gap: 10px; align-items: center; padding: 8px 0; border-top: 1px solid var(--edge); }
+  .copyval { flex: 1 1 auto; min-width: 0; font-size: 14px; overflow-wrap: anywhere; color: var(--pale); }
+  .copyrow .btn { flex: 0 0 auto; min-height: 44px; font-size: 14px; padding: 8px 14px; }
+  #mcpLink .copyval { font-size: 12.5px; color: var(--muted); }
+  .howlist { margin: 0; padding-left: 20px; color: var(--muted); font-size: 14.5px; }
+  .howlist li { margin: 6px 0; }
+
+  /* ---- shared bits ---- */
+  .meta { color: var(--muted); font-size: 14px; line-height: 1.4; }
+  .hurt { color: var(--warn); font-weight: 600; }
+  .accentt { color: var(--accent); }
+  .num-t { font-weight: 600; font-variant-numeric: tabular-nums; }
+
+  section { margin: 0 0 40px; }
+  h2 {
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: .005em;
+    margin: 0 0 4px;
+  }
+  .sub { font-size: 14px; color: var(--muted); margin: 0 0 14px; }
+
+  .note {
+    border-left: 3px solid var(--accent);
+    padding: 10px 0 10px 14px;
+    color: var(--muted);
+    font-size: 14.5px;
+    margin: 0 0 26px;
+  }
+  .note b { color: var(--pale); font-weight: 600; }
+  .note.bad { border-color: var(--warn); }
+
+  .card {
+    background: var(--slate);
+    border: 1px solid var(--edge);
+    border-radius: 8px;
+    padding: 16px;
+  }
+
+  /* ---- this week (the playbook) ---- */
+  .week {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+    margin: 0 0 14px;
+  }
+  .day {
+    min-height: 44px;
+    background: var(--slate);
+    border: 1px solid var(--edge);
+    border-radius: 6px;
+    padding: 0 2px;
+    text-align: center;
+    cursor: pointer;
+    font: inherit;
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .day[aria-current='true'] {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--on-accent);
+    font-weight: 700;
+  }
+  .day[aria-pressed='true']:not([aria-current='true']) {
+    border-color: var(--pale);
+    color: var(--pale);
+  }
+  .playbook .head { font-size: 16px; font-weight: 700; margin: 0 0 3px; }
+  .playbook .detail { margin: 0; color: var(--muted); font-size: 14.5px; }
+
+  /* ---- matchup ---- */
+  .score {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: end;
+    gap: 12px;
+  }
+  .score .side { min-width: 0; }
+  .score .side:last-child { text-align: right; }
+  .score .n {
+    display: block;
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 1.05;
+    font-variant-numeric: tabular-nums;
+  }
+  .score .who2 { font-size: 13px; color: var(--muted); overflow-wrap: anywhere; }
+  .score .vs { color: var(--muted); font-size: 13px; padding-bottom: 6px; }
+  .score .ahead .n { color: var(--accent); }
+  .odds { margin: 12px 0 0; font-size: 14.5px; color: var(--muted); }
+  .odds b { color: var(--pale); font-weight: 600; }
+  .live { color: var(--accent); font-weight: 600; }
+
+  /* ---- lineup ---- */
+  .lineup { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--edge); }
+  .row {
+    display: grid;
+    grid-template-columns: 52px 1fr auto;
+    gap: 10px;
+    align-items: center;
+    padding: 10px 0 10px 8px;
+    border-bottom: 1px solid var(--edge);
+    border-left: 3px solid transparent;
+    margin-left: -11px;
+    min-height: 54px;
+  }
+  .row .slot {
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .row .name { font-weight: 600; font-size: 16px; }
+  .row .meta { font-size: 13px; }
+  .row .right { text-align: right; }
+  .row .pts { display: block; font-size: 16px; }
+  .row .tag { display: block; font-size: 12px; color: var(--muted); margin-top: 1px; }
+  .row.change { border-left-color: var(--accent); background: linear-gradient(90deg, var(--accent-dim), transparent 70%); }
+  .row.change .slot { color: var(--accent); }
+  .row.change .tag { color: var(--accent); font-weight: 700; }
+  .row.locked .name, .row.locked .pts { color: var(--muted); }
+  .row.hole .name { color: var(--warn); }
+
+  .totals {
+    display: flex;
+    gap: 28px;
+    margin-top: 16px;
+    flex-wrap: wrap;
+  }
+  .stat .n {
+    display: block;
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 1.1;
+    font-variant-numeric: tabular-nums;
+  }
+  .stat .l { font-size: 12.5px; color: var(--muted); }
+  .gain .n { color: var(--accent); }
+
+  /* ---- lists of players (moves) ---- */
+  .move {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    padding: 12px 0;
+    border-top: 1px solid var(--edge);
+  }
+  .move:last-child { border-bottom: 1px solid var(--edge); }
+  .verb {
+    flex: 0 0 48px;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--muted);
+  }
+  .verb.in  { color: var(--accent); }
+  .verb.out { color: var(--warn); }
+  .who { flex: 1 1 auto; min-width: 0; }
+  .who b { font-weight: 600; }
+  .pts {
+    flex: 0 0 auto;
+    font-weight: 600;
+    font-size: 14.5px;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+  }
+  .comment { color: var(--muted); font-size: 13px; margin-top: 3px; }
+  .empty { color: var(--muted); font-size: 14.5px; }
+
+  /* ---- collapsed sections ---- */
+  details { border-top: 1px solid var(--edge); }
+  details:last-of-type { border-bottom: 1px solid var(--edge); }
+  summary {
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 52px;
+    padding: 8px 0;
+    font-size: 15.5px;
+    font-weight: 600;
+    color: var(--pale);
+  }
+  summary::-webkit-details-marker { display: none; }
+  summary::before {
+    content: '+';
+    flex: 0 0 22px;
+    color: var(--accent);
+    font-weight: 700;
+    font-size: 20px;
+    text-align: center;
+  }
+  details[open] summary::before { content: '–'; }
+  summary .count { color: var(--muted); font-weight: 500; font-size: 14px; }
+  summary .count.hot { color: var(--warn); }
+  details > *:not(summary) { margin-top: 6px; }
+  details .body { padding: 0 0 22px; }
+  details .sub { margin-bottom: 10px; }
+
+  /* ---- cheat sheet ---- */
+  .rules h3 {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--accent);
+    margin: 26px 0 2px;
+  }
+  .rules h3:first-child { margin-top: 0; }
+  .rule {
+    padding: 13px 0;
+    border-bottom: 1px solid var(--edge);
+  }
+  .rule:last-child { border-bottom: 0; }
+  .rule p { margin: 0; }
+  .rule .r {
+    font-weight: 600;
+    font-size: 15px;
+    margin-bottom: 4px;
+    max-width: 52ch;
+  }
+  .rule .why {
+    color: var(--muted);
+    font-size: 14px;
+    max-width: 62ch;
+  }
+
+  /* ---- alerts card ---- */
+  .alerts h2 { margin-bottom: 4px; }
+  .alerts p { margin: 0 0 12px; color: var(--muted); font-size: 14.5px; }
+  .alerts p:last-child { margin-bottom: 0; }
+  .alerts .on { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin: 0; color: var(--pale); }
+  .alerts details { border: 0; margin-top: 8px; }
+  .alerts summary { min-height: 44px; font-size: 14px; font-weight: 500; color: var(--muted); }
+  .log { list-style: none; padding: 0; margin: 0; font-size: 13.5px; color: var(--muted); }
+  .log li { padding: 8px 0; border-top: 1px solid var(--edge); }
+  .log b { color: var(--pale); font-weight: 600; }
+
+  footer {
+    margin-top: 40px;
+    font-size: 12.5px;
+    color: var(--muted);
+  }
+
+  /* ---- the one motion moment ---- */
+  .fade { animation: rise .55s ease-out both; }
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .fade { animation: none; }
+  }
+
+  @media (min-width: 700px) {
+    .wrap { padding: 0 28px 120px; }
+    .hero { padding-top: 64px; }
+    .step .num.check { background: transparent; border: 2px solid var(--accent); color: var(--accent); }
+  .step .act { font-size: 27px; }
+    .row { grid-template-columns: 64px 1fr auto; }
+  }
+</style>
+
+<div class="wrap">
+  <div class="top">
+    <p class="league" id="leagueName">Your league</p>
+    <p class="when" id="todayLine"></p>
+  </div>
+
+  <div class="hero" id="lead">
+    <h1 id="directive">Getting your week together</h1>
+    <p class="lead-line quiet" id="detail">Pulling rosters and projections from your league.</p>
+  </div>
+
+  <div id="body"></div>
+
+  <details class="sheetwrap">
+    <summary>Good habits</summary>
+    <div class="rules">
+      <h3>Setting your lineup</h3>
+      <div class="rule">
+        <p class="r">Look at the whole week, not just Sunday.</p>
+        <p class="why">Thursday, Saturday and Monday games lock earlier. Handle those players first.</p>
+      </div>
+      <div class="rule">
+        <p class="r">A healthy fill-in is worth more than an empty spot.</p>
+        <p class="why">Any points beat zero. If you cannot find a starter, start whoever is playing.</p>
+      </div>
+      <div class="rule">
+        <p class="r">Check again the morning of.</p>
+        <p class="why">Projections and injury news keep changing until kickoff.</p>
+      </div>
+      <h3>Waivers and free agents</h3>
+      <div class="rule">
+        <p class="r">Pick up players for the weeks ahead.</p>
+        <p class="why">A big game last week matters less than a bigger role going forward.</p>
+      </div>
+      <div class="rule">
+        <p class="r">Rotate kickers and defenses by matchup.</p>
+        <p class="why">They are hard to predict, so play the best matchup each week instead of holding one all season.</p>
+      </div>
+      <div class="rule">
+        <p class="r">Backups to star running backs are cheap insurance.</p>
+        <p class="why">If your starter gets hurt, his backup often takes over the job.</p>
+      </div>
+      <h3>Injuries</h3>
+      <div class="rule">
+        <p class="r">Practice reports come first.</p>
+        <p class="why">A player who misses practice all week is far less likely to play than one who was limited.</p>
+      </div>
+      <div class="rule">
+        <p class="r">Out means zero.</p>
+        <p class="why">Swap an Out player even if his game is late in the week.</p>
+      </div>
+      <h3>Trades</h3>
+      <div class="rule">
+        <p class="r">Offers that help both teams get accepted.</p>
+        <p class="why">Trade from a position you are deep at for one you are thin at.</p>
+      </div>
+      <div class="rule">
+        <p class="r">Think about the playoff weeks.</p>
+        <p class="why">A player with easy matchups late in the season is worth more than his projection today.</p>
+      </div>
+    </div>
+  </details>
+
+  <footer>
+    Data from your fantasy platform, ESPN, nflverse and public news feeds. Projections are estimates.
+    <span id="stamp"></span>
+  </footer>
+</div>
+
+<script src="app.js"></script>

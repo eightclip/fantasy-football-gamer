@@ -1,0 +1,18 @@
+# Fantasy Football Gamer
+
+> A self-hosted fantasy football coach for Sleeper (and ESPN, beta) that deploys to Vercel: best
+> lineup, win odds, injuries, waiver pickups with timing, trades, playoff odds, phone alerts, and a
+> read-only MCP connector for Claude or ChatGPT. MIT licensed. No league data or keys included.
+
+## Start here
+- [AGENTS.md](AGENTS.md): step-by-step setup guide written for AI assistants, including what to ask the user
+- [README.md](README.md): features, costs, limits
+
+## Docs
+- [docs/DEPLOY.md](docs/DEPLOY.md): deploy to Vercel, storage, environment variables, alert scheduling
+- [docs/PLATFORMS.md](docs/PLATFORMS.md): Sleeper and ESPN details, private ESPN leagues, adding a platform
+- [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md): modules, data flow, caching
+- [docs/ALERTS.md](docs/ALERTS.md): when alerts fire and why
+- [docs/AI-CONNECTOR.md](docs/AI-CONNECTOR.md): MCP tools and connecting Claude or ChatGPT
+- [SECURITY.md](SECURITY.md): threat model and secret handling
+- [.env.example](.env.example): every configuration variable

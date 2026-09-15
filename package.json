@@ -1,0 +1,25 @@
+{
+  "name": "fantasy-football-gamer",
+  "version": "1.0.0",
+  "description": "A private coach for your fantasy football team: best lineup, win odds, waiver pickups, trades, injury alerts and an AI connector. Sleeper and ESPN.",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "test": "node --test test/*.test.js",
+    "setup": "node scripts/setup.mjs",
+    "check": "node scripts/check.mjs",
+    "push-env": "node scripts/push-env.mjs",
+    "scan": "node scripts/scan-secrets.mjs",
+    "dev": "node scripts/dev.mjs"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.125.0",
+    "@modelcontextprotocol/sdk": "^1.30.0",
+    "@vercel/blob": "^2.8.0",
+    "@vercel/functions": "^3.9.7",
+    "web-push": "^3.6.7",
+    "zod": "^4.6.5"
+  }
+}
