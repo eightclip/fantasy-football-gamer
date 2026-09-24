@@ -1,3 +1,5 @@
+<img src=".github/media/header.png" alt="Fantasy Football Gamer — best lineup, win odds, waiver pickups, trades, phone alerts, AI connector" width="100%">
+
 # Fantasy Football Gamer
 
 A private coach for your fantasy football team. It checks your league all week and tells you,
