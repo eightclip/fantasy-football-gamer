@@ -16,7 +16,7 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.125.0",
-    "@modelcontextprotocol/sdk": "^1.30.0",
+    "@modelcontextprotocol/sdk": "^1.31.0",
     "@vercel/blob": "^2.8.0",
     "@vercel/functions": "^3.9.7",
     "web-push": "^3.6.7",
